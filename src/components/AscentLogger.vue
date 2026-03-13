@@ -4,9 +4,10 @@ import WheelPicker from './WheelPicker.vue'
 
 const emit = defineEmits(['save'])
 
-const fontGrades = ['5', '6A','6B', '6C', '7A', '7B', '7B+', '7C', '7C+', '8A']
+const fontGrades = ['5', '6A', '6B', '6C', '7A', '7B', '7B+', '7C', '7C+', '8A']
 
-// Data structures with placeholder icon paths
+const results = ['Flash', 'Top', 'Repetition', 'Project']
+
 const tagsList = [
   {label: 'Sloper', path: 'icons/sloper.svg'},
   {label: 'Crimp', path: 'icons/crimp.svg'},
@@ -29,8 +30,11 @@ const inclinesList = [
 const form = reactive({
   grade: '6A',
   result: 'Top',
+  attempts: 2,
   tags: [],
   incline: [],
+  rating: 5,
+  difficulty: 5,
   notes: ''
 })
 
@@ -52,6 +56,30 @@ const save = () => {
     <div>
       <label class="label-style">Font Grade</label>
       <WheelPicker :items="fontGrades" v-model="form.grade" />
+    </div>
+
+    <div>
+      <label class="text-xs text-gray-400 font-bold tracking-wider uppercase mb-2 block">Result</label>
+      <div class="grid grid-cols-2 gap-2">
+        <button v-for="res in results" :key="res" @click="form.result = res"
+          class="py-3 rounded-lg font-semibold transition-colors"
+          :class="form.result === res ? 'bg-green-500/20 border-2 border-green-500 text-white' : 'bg-slate-800 text-slate-300'">
+          {{ res }}
+        </button>
+      </div>
+
+      <div v-if="['Top', 'Repetition', 'Project'].includes(form.result)"
+        class="mt-4 flex items-center justify-between bg-slate-800 rounded-lg p-2">
+        <span class="pl-2 font-semibold text-gray-300">
+          {{ form.result === 'Repetition' ? 'Reps' : 'Attempts' }}
+        </span>
+        <div class="flex items-center space-x-4">
+          <button @click="form.attempts = Math.max(2, form.attempts - 1)"
+            class="w-10 h-10 bg-slate-700 rounded-full text-xl font-bold">-</button>
+          <span class="text-xl font-bold w-6 text-center">{{ form.attempts }}</span>
+          <button @click="form.attempts++" class="w-10 h-10 bg-slate-700 rounded-full text-xl font-bold">+</button>
+        </div>
+      </div>
     </div>
 
     <div>
@@ -82,6 +110,26 @@ const save = () => {
           }"></div>
           <span class="text-[10px] font-bold uppercase tracking-wider">{{ tag.label }}</span>
         </button>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <div class="flex justify-between mb-1">
+          <label class="text-xs text-gray-400 font-bold tracking-wider uppercase block">Star Rating</label>
+          <span class="text-yellow-400 font-bold">{{ form.rating }} / 10</span>
+        </div>
+        <input type="range" min="1" max="10" v-model="form.rating"
+          class="w-full accent-yellow-400 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+      </div>
+
+      <div>
+        <div class="flex justify-between mb-1">
+          <label class="text-xs text-gray-400 font-bold tracking-wider uppercase block">Perceived Difficulty</label>
+          <span class="text-red-400 font-bold">{{ form.difficulty }} / 10</span>
+        </div>
+        <input type="range" min="1" max="10" v-model="form.difficulty"
+          class="w-full accent-red-500 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
       </div>
     </div>
 
