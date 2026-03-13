@@ -4,7 +4,7 @@ import WheelPicker from './WheelPicker.vue'
 
 const emit = defineEmits(['save'])
 
-const fontGrades = ['4', '4+', '5', '5+', '6A', '6A+', '6B', '6B+', '6C', '6C+', '7A', '7A+', '7B', '7B+', '7C', '7C+', '8A']
+const fontGrades = ['5', '6A','6B', '6C', '7A', '7B', '7B+', '7C', '7C+', '8A']
 
 // Data structures with placeholder icon paths
 const tagsList = [
