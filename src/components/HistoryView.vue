@@ -109,7 +109,7 @@ const denormalizeGrip = (grip) => {
             <div class="flex items-center gap-4 mb-6 border-b border-slate-800 pb-6 mt-2">
               <div :class="gradeColors[selectedAscent.grade]"
                 class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <span class="text-3xl font-black text-white">{{ selectedAscent.grade }}</span>
+                <span class="text-3xl font-black text-white text-shadow">{{ selectedAscent.grade }}</span>
               </div>
               <div>
                 <h2 class="text-2xl font-black text-slate-100 tracking-tight">{{ selectedAscent.name ||
