@@ -2,6 +2,7 @@
 import {ref} from 'vue'
 import AscentLogger from './components/AscentLogger.vue'
 import FingerboardLogger from './components/FingerboardLogger.vue'
+import HistoryView from './components/HistoryView.vue'
 import {supabase} from './supabase'
 import {useToast} from "vue-toastification";
 
@@ -13,21 +14,32 @@ const toast = useToast();
 const startSession = () => {
   activeSession.value = {
     startTime: new Date(),
-    name: `Session ${new Date().toLocaleDateString()}`,
+    name: `Session ${new Date().toLocaleDateString('ru-RU')}`,
     location: 'RockZona',
     ascents: []
   }
   view.value = 'session'
 }
 
-const saveFingerboardOnly = (data) => {
-  console.log("Saving Standalone Fingerboard:", data)
-  view.value = 'home' // Return home after quick log
+const saveFingerboardOnly = async (hang) => {
+  view.value = 'home'
+
+  const {_, error} = await supabase
+    .from('fingerboard')
+    .insert(hang)
+
+  if (error) {
+    toast.error(error.message)
+    console.log(error)
+    return
+  }
+
+  toast.success("Hang saved!")
 }
 
 const addAscent = (ascent) => {
   activeSession.value.ascents.push(ascent)
-  toast.success("Ascent logged!")
+  toast.info("Ascent logged!")
 }
 
 const endSession = async () => {
@@ -38,18 +50,37 @@ const endSession = async () => {
     return
   }
 
-  const {data, error} = await supabase
+  const {data: session, error} = await supabase
     .from('sessions')
-    .insert([{
+    .insert({
       name: activeSession.value.name,
       location: activeSession.value.location,
-      ascents: activeSession.value.ascents
-    }])
+      // ascents: activeSession.value.ascents
+    })
+    .select()
 
-  if (!error) {
-    activeSession.value = null
-    toast.success("Session saved!")
+  if (error) {
+    toast.error(error.message)
+    console.log(error)
+    return
   }
+
+  for (const ascent of activeSession.value.ascents) {
+    ascent.session_id = session.id
+  }
+
+  const {_, error: ascentsError} = await supabase
+    .from('ascents')
+    .insert(activeSession.value.ascents)
+
+  if (ascentsError) {
+    toast.error(ascentsError.message)
+    console.log(ascentsError)
+    return
+  }
+
+  activeSession.value = null
+  toast.success("Session saved!")
 }
 
 </script>
@@ -57,14 +88,14 @@ const endSession = async () => {
 <template>
   <div class="min-h-screen bg-gray-950 text-slate-100 p-4 font-sans">
 
-    <div v-if="view === 'home'" class="max-w-md mx-auto h-[80vh] flex flex-col justify-center gap-6">
+    <div v-if="view === 'home'" class="max-w-md mx-auto h-[80vh] flex flex-col justify-center items-center gap-6">
       <h1
         class="text-4xl font-black mb-8 text-center bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-        SEND TRACKER
+        CLID
       </h1>
 
       <button @click="startSession"
-        class="group relative overflow-hidden bg-blue-600 p-8 rounded-3xl transition-all active:scale-95 shadow-xl">
+        class="group relative w-full overflow-hidden bg-blue-600 p-8 rounded-3xl transition-all active:scale-95 shadow-xl">
         <div class="relative z-10 flex flex-col items-start">
           <span class="text-3xl">🧗</span>
           <span class="text-2xl font-bold mt-2">Start Session</span>
@@ -74,11 +105,18 @@ const endSession = async () => {
       </button>
 
       <button @click="view = 'fingerboard'"
-        class="group relative overflow-hidden bg-slate-800 p-8 rounded-3xl transition-all active:scale-95 shadow-lg border border-slate-700">
+        class="group relative w-full  overflow-hidden bg-slate-800 p-8 rounded-3xl transition-all active:scale-95 shadow-lg border border-slate-700">
         <div class="relative z-10 flex flex-col items-start">
           <span class="text-3xl">🦾</span>
           <span class="text-2xl font-bold mt-2">Fingerboard</span>
-          <p class="text-slate-400 text-sm">Quick log a hang protocol</p>
+          <p class="text-slate-400 text-sm">Quick log hang set</p>
+        </div>
+      </button>
+
+      <button @click="view = 'history'"
+        class="group relative w-full mt-4 overflow-hidden bg-slate-800/50 p-3 rounded-3xl transition-all active:scale-95 shadow-lg w-[50%]">
+        <div class="relative z-10 flex flex-col items-center">
+          <span class="text-l font-bold">History</span>
         </div>
       </button>
     </div>
@@ -100,6 +138,10 @@ const endSession = async () => {
         <h2 class="text-xl font-bold">Quick Log Hang</h2>
       </div>
       <FingerboardLogger @save="saveFingerboardOnly" />
+    </div>
+
+    <div v-if="view === 'history'" class="fixed inset-0 z-50 bg-slate-950">
+      <HistoryView @close="view = 'home'" />
     </div>
 
   </div>

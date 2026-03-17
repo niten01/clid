@@ -1,5 +1,6 @@
 <script setup>
 import {reactive} from 'vue'
+import {normalizeField} from '../utils'
 import WheelPicker from './WheelPicker.vue'
 
 const emit = defineEmits(['save'])
@@ -27,7 +28,7 @@ const inclinesList = [
   {label: 'Arete', path: 'icons/arete.svg'},
 ]
 
-const form = reactive({
+const defaultState = () => ({
   grade: '6A',
   result: 'Top',
   attempts: 2,
@@ -35,8 +36,10 @@ const form = reactive({
   incline: [],
   rating: 5,
   difficulty: 5,
-  notes: ''
+  note: ''
 })
+
+const form = reactive(defaultState())
 
 const toggleSelection = (arr, item) => {
   const index = arr.indexOf(item)
@@ -45,8 +48,11 @@ const toggleSelection = (arr, item) => {
 }
 
 const save = () => {
+  normalizeField(form, 'result')
+  normalizeField(form, 'tags')
+  normalizeField(form, 'incline')
   emit('save', {...form})
-  form.notes = '' // Clear notes for next ascent
+  Object.assign(form, defaultState())
 }
 </script>
 
@@ -135,7 +141,7 @@ const save = () => {
 
     <div>
       <label class="label-style">Personal Notes</label>
-      <textarea v-model="form.notes" placeholder="Beta notes, beta breaks, or how it felt..."
+      <textarea v-model="form.note" placeholder="Beta notes, beta breaks, or how it felt..."
         class="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder:text-slate-600 resize-none"
         rows="3"></textarea>
     </div>

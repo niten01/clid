@@ -1,33 +1,37 @@
 <script setup>
 import {reactive} from 'vue'
+import {normalizeField} from '../utils'
 import WheelPicker from './WheelPicker.vue'
 const seconds = Array.from({length: 61}, (_, i) => i)
+const edges = [
+  '33mm', '15mm', '53mm One Hand', '35/50 Pocket', '30 Pocket', '20°', '35°', '45°'
+]
 
 const emit = defineEmits(['save'])
 
 // Standard grip types for fingerboarding
 const gripTypes = [
-  'Half Crimp', 'Open Hand', '3-Finger Drag',
-  'Full Crimp', 'Pinch', 'Sloper', 'Pocket', 'Jug'
+  'Open Hand', 'Half Crimp', 'Active Crimp', 'Full Crimp', 'Passive', '1,2 Pocket', '2,3 Pocket', '3,4 Pocket'
 ]
 
 // Default to a standard "Max Hang" protocol baseline
 const defaultState = () => ({
   grip: 'Half Crimp',
+  edge: '33mm',
   sets: 3,
-  reps: 1, // 1 rep = max hang. >1 = repeaters
-  hangTime: 10, // seconds
-  restTime: 3, // seconds (relevant for repeaters)
-  addedWeight: 0, // kg (can be negative for pulley assistance)
-  notes: ''
+  reps: 3,
+  hang_time: 10,
+  rest_time: 3,
+  weight: 0,
 })
 
 const form = reactive(defaultState())
 
 const saveTraining = () => {
-  emit('save', {type: 'fingerboard', ...form, timestamp: new Date()})
-  // We don't fully reset the form here because users often do multiple 
-  // sets of the same protocol with just a grip or weight change!
+  normalizeField(form, 'grip')
+  normalizeField(form, 'edge')
+  emit('save', {...form})
+  Object.assign(form, defaultState())
 }
 </script>
 
@@ -41,6 +45,17 @@ const saveTraining = () => {
           class="py-2 px-2 rounded-lg text-sm font-semibold transition-colors border"
           :class="form.grip === grip ? 'bg-indigo-500/20 border-indigo-500 text-indigo-300' : 'bg-gray-700 border-gray-600 text-gray-300'">
           {{ grip }}
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <label class="text-xs text-gray-400 font-bold tracking-wider uppercase mb-2 block">Edge</label>
+      <div class="grid grid-cols-2 gap-2">
+        <button v-for="edge in edges" :key="edge" @click="form.edge = edge"
+          class="py-2 px-2 rounded-lg text-sm font-semibold transition-colors border"
+          :class="form.edge === edge ? 'bg-indigo-500/20 border-indigo-500 text-indigo-300' : 'bg-gray-700 border-gray-600 text-gray-300'">
+          {{ edge }}
         </button>
       </div>
     </div>
@@ -75,11 +90,11 @@ const saveTraining = () => {
       <div class="bg-gray-700 rounded-xl p-3 flex justify-between items-center">
         <span class="text-sm text-gray-300 font-semibold">Added Weight (kg)</span>
         <div class="flex items-center space-x-4">
-          <button @click="form.addedWeight -= 2.5"
+          <button @click="form.weight -= 2.5"
             class="w-10 h-10 bg-gray-600 rounded-full font-bold text-lg active:bg-gray-500">-</button>
-          <span class="text-xl font-bold w-10 text-center text-indigo-400">{{ form.addedWeight > 0 ? '+' : '' }}{{
-            form.addedWeight }}</span>
-          <button @click="form.addedWeight += 2.5"
+          <span class="text-xl font-bold w-10 text-center text-indigo-400">{{ form.weight > 0 ? '+' : '' }}{{
+            form.weight }}</span>
+          <button @click="form.weight += 2.5"
             class="w-10 h-10 bg-gray-600 rounded-full font-bold text-lg active:bg-gray-500">+</button>
         </div>
       </div>
@@ -87,12 +102,12 @@ const saveTraining = () => {
 
     <div>
       <label class="label-style">Hang Time</label>
-      <WheelPicker :items="seconds" v-model="form.hangTime" unit="sec" />
+      <WheelPicker :items="seconds" v-model="form.hang_time" unit="sec" />
     </div>
 
     <div :class="{'opacity-30': form.reps <= 1}">
       <label class="label-style">Rest Time (between reps)</label>
-      <WheelPicker :items="seconds" v-model="form.restTime" unit="sec" />
+      <WheelPicker :items="seconds" v-model="form.rest_time" unit="sec" />
     </div>
 
     <button @click="saveTraining"
