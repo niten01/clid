@@ -125,7 +125,7 @@ const endSession = async () => {
       <div class="flex justify-between items-center bg-slate-900 p-4 rounded-2xl border border-slate-800">
         <div>
           <h2 class="font-bold">{{ activeSession.name }}</h2>
-          <p class="text-xs text-slate-500">{{ activeSession.ascents.length }} Boulders logged</p>
+          <p class="text-xs text-slate-500">{{ activeSession.ascents.length }} boulders logged</p>
         </div>
         <button @click="endSession" class="text-red-400 font-bold px-3 py-1 bg-red-400/10 rounded-lg">Finish</button>
       </div>

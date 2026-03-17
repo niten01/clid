@@ -188,7 +188,7 @@ const denormalizeGrip = (grip) => {
             </div>
             <div class="text-right flex flex-col items-end">
               <span class="text-blue-500 font-black text-xl">{{ session.ascents?.length || 0 }}</span>
-              <span class="text-[10px] uppercase text-slate-500 font-bold">Sends</span>
+              <span class="text-[10px] uppercase text-slate-500 font-bold">boulders</span>
             </div>
           </button>
 
