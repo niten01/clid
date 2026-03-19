@@ -103,7 +103,7 @@ const formatDate = (dateString) => {
   <div class="max-w-md mx-auto h-screen flex flex-col bg-slate-950 text-slate-100">
 
     <div class="flex items-center gap-4 p-4 border-b border-slate-800 bg-slate-900 sticky top-0 z-10">
-      <button @click="emit('close')" class="p-2 bg-slate-800 rounded-full active:scale-95">⬅️</button>
+      <button @click="emit('close')" class="text-2xl p-2 rounded-full active:scale-95">←</button>
       <h2 class="text-xl font-bold flex-1">Training History</h2>
     </div>
 
@@ -239,7 +239,8 @@ const formatDate = (dateString) => {
                 <span class="text-[10px] uppercase text-slate-500 font-bold">warmup boulders</span>
 
               </button>
-              <div v-if="warmupExpanded" class="flex flex-row gap-2 rounded-b-xl bg-slate-800 p-3">
+              <div v-if="warmupExpanded"
+                class="border border-slate-800 bg-slate-900/50 flex flex-row gap-2 rounded-b-xl p-3">
                 <div v-for="(num, grade) in session.warmupMap">
                   <span :class="gradeColors[grade]"
                     class="px-2 py-0.5 text-white text-shadow rounded font-black text-sm">{{
