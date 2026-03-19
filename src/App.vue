@@ -139,21 +139,19 @@ const discardSafety = () => {
     </div>
 
     <div v-if="view === 'session'" class="max-w-md mx-auto space-y-4">
-      <div class="flex justify-between items-center bg-slate-900 p-4 rounded-2xl border border-slate-800">
-        <button @click="view = 'home'" class="text-xl p-2 rounded-full">←</button>
+      <div class="flex justify-between items-center gap-3 bg-slate-900 p-4 rounded-2xl border border-slate-800">
+        <button @click="view = 'home'" class="text-xl rounded-full">←</button>
         <div>
           <h2 class="font-bold">{{ activeSession.name }}</h2>
           <p class="text-xs text-slate-500">{{ activeSession.ascents.length }} boulders logged</p>
         </div>
-        <div class="flex gap-2">
-          <button v-if="discardClicked" @click="discardSession"
-            class="text-red-400 font-bold px-3 py-1 bg-red-400/10 rounded-lg">Sure?</button>
-          <button v-else @click="discardSafety"
-            class="text-orange-400 font-bold px-3 py-1 bg-orange-400/10 rounded-lg">Discard</button>
+        <button v-if="discardClicked" @click="discardSession"
+          class="text-red-400 font-bold px-3 py-1 bg-red-400/10 rounded-lg">Sure?</button>
+        <button v-else @click="discardSafety"
+          class="text-orange-400 font-bold px-3 py-1 bg-orange-400/10 rounded-lg">Discard</button>
 
-          <button @click="endSession"
-            class="text-green-400 font-bold px-3 py-1 bg-green-400/10 rounded-lg">Finish</button>
-        </div>
+        <button @click="endSession"
+          class="text-green-400 font-bold px-3 py-1 bg-green-400/10 rounded-lg">Finish</button>
       </div>
       <AscentLogger @save="addAscent" />
     </div>
