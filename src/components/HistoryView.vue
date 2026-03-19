@@ -258,8 +258,8 @@ const formatDate = (dateString) => {
               </div>
             </div>
 
-            <button v-for="ascent in session.ascents.filter(a => !a.tags.includes('Warmup'))" :key="ascent.id"
-              @click="selectedAscent = ascent"
+            <button v-for="ascent in session.ascents.filter(a => !a.tags.includes('Warmup')).sort((a, b) => a.id > b.id)"
+              :key="ascent.id" @click="selectedAscent = ascent"
               class="w-full bg-slate-800 p-3 rounded-xl flex items-center justify-between active:scale-[0.98] transition-transform border border-transparent active:border-slate-600 text-left">
               <div>
                 <div class="flex items-center gap-2 mb-2">
