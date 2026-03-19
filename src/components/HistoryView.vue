@@ -3,6 +3,9 @@ import {ref, onMounted} from 'vue'
 import {supabase} from '../supabase'
 import {denormalizeField} from '../utils'
 import {VueSpinnerClimbingBox} from 'vue3-spinners'
+import {useToast} from 'vue-toastification';
+
+const toast = useToast();
 
 const emit = defineEmits(['close'])
 
@@ -35,6 +38,12 @@ const fetchData = async () => {
     .select('*, ascents(*)')
     .order('created_at', {ascending: false})
 
+  if (sessionsError) {
+    toast.error(sessionsError.message)
+    console.log(sessionsError)
+    return
+  }
+
   for (const session of sessionsData) {
     session.ascents.sort((a, b) => {
       return a.id > b.id
@@ -54,9 +63,7 @@ const fetchData = async () => {
     }
   }
 
-  if (!sessionsError && sessionsData) {
-    sessions.value = sessionsData
-  }
+  sessions.value = sessionsData
 
   const {data: fbData, error: fbError} = await supabase
     .from('fingerboard')
@@ -175,11 +182,11 @@ const formatDate = (dateString) => {
             <div class="flex gap-2 mb-6">
               <div class="flex-1 bg-slate-800 rounded-xl p-3 flex justify-between items-center">
                 <span class="text-xs uppercase text-slate-400 font-bold">Rating</span>
-                <span class="text-yellow-400 font-black text-lg">⭐ {{ selectedAscent.rating }}/10</span>
+                <span class="text-yellow-400 font-black text-lg">⭐ {{ selectedAscent.rating || '-' }}/10</span>
               </div>
               <div class="flex-1 bg-slate-800 rounded-xl p-3 flex justify-between items-center">
                 <span class="text-xs uppercase text-slate-400 font-bold">Difficulty</span>
-                <span class="text-red-400 font-black text-lg">🔥 {{ selectedAscent.difficulty }}/10</span>
+                <span class="text-red-400 font-black text-lg">🔥 {{ selectedAscent.difficulty || '-' }}/10</span>
               </div>
             </div>
 
@@ -224,12 +231,12 @@ const formatDate = (dateString) => {
               No ascents logged in this session.
             </div>
 
-            <div>
+            <div v-if="(session?.numWarmups || 0) > 0">
               <button @click="warmupExpanded = !warmupExpanded"
                 class="w-full bg-slate-800 p-3 flex items-center justify-between active:scale-[0.98] transition-transform border border-transparent active:border-slate-600 text-left"
                 :class="warmupExpanded ? 'rounded-t-xl' : 'rounded-xl'">
                 <span class="text-blue-500 font-black text-xl">{{ session?.numWarmups || 0 }}</span>
-                <span class="text-[10px] uppercase text-slate-500 font-bold">boulders warmup</span>
+                <span class="text-[10px] uppercase text-slate-500 font-bold">warmup boulders</span>
 
               </button>
               <div v-if="warmupExpanded" class="flex flex-row gap-2 rounded-b-xl bg-slate-800 p-3">
@@ -268,8 +275,8 @@ const formatDate = (dateString) => {
                 </div>
               </div>
               <div class="text-right text-xs text-slate-500 space-y-1">
-                <div>⭐ {{ ascent.rating }}/10</div>
-                <div>🔥 {{ ascent.difficulty }}/10</div>
+                <div v-if="ascent.rating">⭐ {{ ascent.rating }}/10</div>
+                <div v-if="ascent.difficulty">🔥 {{ ascent.difficulty }}/10</div>
               </div>
             </button>
           </div>
