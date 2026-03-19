@@ -1,6 +1,7 @@
 <script setup>
 import {ref, onMounted} from 'vue'
 import {supabase} from '../supabase'
+import {denormalizeField} from '../utils'
 import {VueSpinnerClimbingBox} from 'vue3-spinners'
 
 const emit = defineEmits(['close'])
@@ -11,6 +12,7 @@ const fingerboardLogs = ref([])
 const loading = ref(true)
 const expandedSessionId = ref(null)
 const selectedAscent = ref(null)
+const warmupExpanded = ref(false)
 
 const gradeColors = {
   '5': 'bg-gray-300',
@@ -33,6 +35,25 @@ const fetchData = async () => {
     .select('*, ascents(*)')
     .order('created_at', {ascending: false})
 
+  for (const session of sessionsData) {
+    session.ascents.sort((a, b) => {
+      return a.id > b.id
+    })
+
+    session.warmupMap = {}
+    session.numWarmups = 0
+    for (const ascent of session.ascents) {
+      if (ascent.tags.includes('warmup')) {
+        session.warmupMap[ascent.grade] = (session.warmupMap[ascent.grade] || 0) + 1;
+        session.numWarmups++;
+      }
+
+      denormalizeField(ascent, 'tags')
+      denormalizeField(ascent, 'incline')
+      denormalizeField(ascent, 'result')
+    }
+  }
+
   if (!sessionsError && sessionsData) {
     sessions.value = sessionsData
   }
@@ -41,6 +62,11 @@ const fetchData = async () => {
     .from('fingerboard')
     .select('*')
     .order('created_at', {ascending: false})
+
+  for (const log of fbData) {
+    denormalizeField(log, 'grip')
+    denormalizeField(log, 'edge')
+  }
 
   if (!fbError && fbData) {
     fingerboardLogs.value = fbData
@@ -55,6 +81,7 @@ onMounted(() => {
 
 const toggleSession = (id) => {
   expandedSessionId.value = expandedSessionId.value === id ? null : id
+  warmupExpanded.value = false
 }
 
 const formatDate = (dateString) => {
@@ -63,9 +90,6 @@ const formatDate = (dateString) => {
   })
 }
 
-const denormalizeGrip = (grip) => {
-  return grip.replace(/_/g, ' ').replace(/^./, grip[0].toUpperCase())
-}
 </script>
 
 <template>
@@ -119,6 +143,8 @@ const denormalizeGrip = (grip) => {
                     'repetition' ?
                     'Reps' : 'Attempts' }}
                 </p>
+                <p class="text-slate-700 font-xs">
+                  ID: {{ selectedAscent.id }} </p>
               </div>
             </div>
 
@@ -198,7 +224,27 @@ const denormalizeGrip = (grip) => {
               No ascents logged in this session.
             </div>
 
-            <button v-for="ascent in session.ascents" :key="ascent.id" @click="selectedAscent = ascent"
+            <div>
+              <button @click="warmupExpanded = !warmupExpanded"
+                class="w-full bg-slate-800 p-3 flex items-center justify-between active:scale-[0.98] transition-transform border border-transparent active:border-slate-600 text-left"
+                :class="warmupExpanded ? 'rounded-t-xl' : 'rounded-xl'">
+                <span class="text-blue-500 font-black text-xl">{{ session?.numWarmups || 0 }}</span>
+                <span class="text-[10px] uppercase text-slate-500 font-bold">boulders warmup</span>
+
+              </button>
+              <div v-if="warmupExpanded" class="flex flex-row gap-2 rounded-b-xl bg-slate-800 p-3">
+                <div v-for="(num, grade) in session.warmupMap">
+                  <span :class="gradeColors[grade]"
+                    class="px-2 py-0.5 text-white text-shadow rounded font-black text-sm">{{
+                      grade }}
+                  </span>
+                  <span class="text-sm"> ✕ {{ num }}</span>
+                </div>
+              </div>
+            </div>
+
+            <button v-for="ascent in session.ascents.filter(a => !a.tags.includes('Warmup'))" :key="ascent.id"
+              @click="selectedAscent = ascent"
               class="w-full bg-slate-800 p-3 rounded-xl flex items-center justify-between active:scale-[0.98] transition-transform border border-transparent active:border-slate-600 text-left">
               <div>
                 <div class="flex items-center gap-2 mb-2">
@@ -238,7 +284,7 @@ const denormalizeGrip = (grip) => {
           class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md flex justify-between items-center">
           <div>
             <div class="flex items-center gap-2 mb-1">
-              <span class="font-bold text-indigo-300 text-lg">{{ denormalizeGrip(log.grip) }}</span>
+              <span class="font-bold text-indigo-300 text-lg">{{ log.grip }}</span>
               <span class="text-xs bg-slate-700 px-2 py-0.5 rounded text-slate-300">{{ log.edge }}</span>
             </div>
             <p class="text-xs text-slate-400">{{ formatDate(log.created_at) }}</p>

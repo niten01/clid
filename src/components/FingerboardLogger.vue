@@ -4,7 +4,7 @@ import {normalizeField} from '../utils'
 import WheelPicker from './WheelPicker.vue'
 const seconds = Array.from({length: 61}, (_, i) => i)
 const edges = [
-  '33mm', '15mm', '53mm One Hand', '35/50 Pocket', '30 Pocket', '20°', '35°', '45°'
+  '33mm', '15mm', '53mm One Hand', '35/50 Pocket', '30 Pocket', '20°', '35°', '45°', 'Passive'
 ]
 
 const emit = defineEmits(['save'])

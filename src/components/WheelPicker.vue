@@ -33,7 +33,7 @@ onMounted(() => {
     </div>
 
     <div ref="scrollContainer" @scroll="handleScroll"
-      class="flex items-center overflow-x-auto snap-x snap-mandatory scroll-smooth px-[calc(50%-40px)] hide-scrollbar">
+      class="flex items-center overflow-x-auto snap-x snap-mandatory scroll-smooth px-[calc(50%-40px)] hide-scrollbar overflow-hidden">
       <div v-for="item in items" :key="item"
         class="w-20 py-4 shrink-0 flex flex-col items-center justify-center snap-center transition-all duration-300"
         :class="modelValue === item ? 'scale-125 text-white font-black' : 'text-gray-500 scale-90'">

@@ -10,6 +10,7 @@ const fontGrades = ['5', '6A', '6B', '6C', '7A', '7B', '7B+', '7C', '7C+', '8A']
 const results = ['Flash', 'Top', 'Repetition', 'Project']
 
 const tagsList = [
+  {label: 'Warmup', path: 'icons/timer.svg'},
   {label: 'Sloper', path: 'icons/sloper.svg'},
   {label: 'Crimp', path: 'icons/crimp.svg'},
   {label: 'Dynamic', path: 'icons/dyno.svg'},
@@ -34,8 +35,8 @@ const defaultState = () => ({
   attempts: 2,
   tags: [],
   incline: [],
-  rating: 5,
-  difficulty: 5,
+  rating: 0,
+  difficulty: 0,
   note: ''
 })
 
@@ -51,6 +52,14 @@ const save = () => {
   normalizeField(form, 'result')
   normalizeField(form, 'tags')
   normalizeField(form, 'incline')
+
+  if (form.result === 'flash') {
+    form.attempts = 1
+  }
+
+  if (form.rating === 0) form.rating = null
+  if (form.difficulty === 0) form.rating = null
+
   emit('save', {...form})
   Object.assign(form, defaultState())
 }
@@ -123,18 +132,18 @@ const save = () => {
       <div>
         <div class="flex justify-between mb-1">
           <label class="text-xs text-gray-400 font-bold tracking-wider uppercase block">Star Rating</label>
-          <span class="text-yellow-400 font-bold">{{ form.rating }} / 10</span>
+          <span class="text-yellow-400 font-bold">{{ form.rating == 0 ? '-' : form.rating }} / 10</span>
         </div>
-        <input type="range" min="1" max="10" v-model="form.rating"
+        <input type="range" min="0" max="10" v-model="form.rating"
           class="w-full accent-yellow-400 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
       </div>
 
       <div>
         <div class="flex justify-between mb-1">
           <label class="text-xs text-gray-400 font-bold tracking-wider uppercase block">Perceived Difficulty</label>
-          <span class="text-red-400 font-bold">{{ form.difficulty }} / 10</span>
+          <span class="text-red-400 font-bold">{{ form.difficulty == 0 ? '-' : form.difficulty }} / 10</span>
         </div>
-        <input type="range" min="1" max="10" v-model="form.difficulty"
+        <input type="range" min="0" max="10" v-model="form.difficulty"
           class="w-full accent-red-500 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
       </div>
     </div>
