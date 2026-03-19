@@ -1,7 +1,7 @@
 <script setup>
 import {ref, onMounted} from 'vue'
 import {supabase} from '../supabase'
-import {denormalizeField} from '../utils'
+import {denormalizeField, boulderColorStyles} from '../utils'
 import {VueSpinnerClimbingBox} from 'vue3-spinners'
 import {useToast} from 'vue-toastification';
 
@@ -177,6 +177,13 @@ const formatDate = (dateString) => {
                   </span>
                 </div>
               </div>
+
+              <div v-if="selectedAscent.color">
+                <span class="text-[10px] uppercase text-slate-500 font-bold tracking-widest block mb-2">Color</span>
+                <div class="border-4 rounded-full aspect-square w-[12%]"
+                  :class="boulderColorStyles.find(c => c.name === selectedAscent.color)?.class">
+                </div>
+              </div>
             </div>
 
             <div class="flex gap-2 mb-6">
@@ -273,6 +280,9 @@ const formatDate = (dateString) => {
                     class="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-300 uppercase font-bold">
                     {{ inc }}
                   </span>
+                  <div v-if="ascent.color" class="border rounded-full aspect-square h-4"
+                    :class="boulderColorStyles.find(c => c.name === ascent.color)?.class">
+                  </div>
                 </div>
               </div>
               <div class="text-right text-xs text-slate-500 space-y-1">

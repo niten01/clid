@@ -2,6 +2,7 @@
 import {reactive} from 'vue'
 import {normalizeField} from '../utils'
 import WheelPicker from './WheelPicker.vue'
+import ColorPicker from './ColorPicker.vue'
 
 const emit = defineEmits(['save'])
 
@@ -33,6 +34,7 @@ const defaultState = () => ({
   grade: '6A',
   result: 'Top',
   attempts: 2,
+  color: null,
   tags: [],
   incline: [],
   rating: 0,
@@ -73,7 +75,7 @@ const save = () => {
     </div>
 
     <div>
-      <label class="text-xs text-gray-400 font-bold tracking-wider uppercase mb-2 block">Result</label>
+      <label class="label-style">Result</label>
       <div class="grid grid-cols-2 gap-2">
         <button v-for="res in results" :key="res" @click="form.result = res"
           class="py-3 rounded-lg font-semibold transition-colors"
@@ -125,6 +127,11 @@ const save = () => {
           <span class="text-[10px] font-bold uppercase tracking-wider">{{ tag.label }}</span>
         </button>
       </div>
+    </div>
+
+    <div>
+      <label class="label-style">Boulder Color</label>
+      <ColorPicker v-model="form.color" />
     </div>
 
     <div class="space-y-4">

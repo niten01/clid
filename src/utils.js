@@ -28,3 +28,15 @@ export function denormalizeField(obj, str) {
     obj[str] = denormalizeString(obj[str])
   }
 }
+
+export const boulderColorStyles = [
+  { name: 'unset', class: 'bg-slate-700 border-slate-600', icon: '∅' },
+  { name: 'red', class: 'bg-red-500 border-red-400' },
+  { name: 'green', class: 'bg-emerald-500 border-emerald-400' },
+  { name: 'blue', class: 'bg-blue-500 border-blue-400' },
+  { name: 'yellow', class: 'bg-yellow-400 border-yellow-300' },
+  { name: 'white', class: 'bg-white border-slate-200' },
+  { name: 'black', class: 'bg-black border-slate-800' },
+  { name: 'purple', class: 'bg-purple-600 border-purple-400' },
+  { name: 'colorful', class: 'bg-gradient-to-tr from-yellow-500 via-purple-700 to-blue-500 border-none' },
+]
