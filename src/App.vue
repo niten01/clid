@@ -1,22 +1,26 @@
 <script setup>
-import {ref} from 'vue'
 import AscentLogger from './components/AscentLogger.vue'
 import FingerboardLogger from './components/FingerboardLogger.vue'
 import HistoryView from './components/HistoryView.vue'
 import {supabase} from './supabase'
 import {useToast} from "vue-toastification";
+import {StorageSerializers, useStorage} from '@vueuse/core'
+import {ref} from 'vue';
 
-const view = ref('home') // 'home', 'session', 'fingerboard'
-const activeSession = ref(null)
+const view = useStorage('view', 'home') // 'home', 'session', 'fingerboard'
+const activeSession = useStorage('activeSession', null, undefined, {serializer: StorageSerializers.object})
+const discardClicked = ref(false)
 
 const toast = useToast();
 
 const startSession = () => {
-  activeSession.value = {
-    startTime: new Date(),
-    name: `Session ${new Date().toLocaleDateString('ru-RU')}`,
-    location: 'RockZona',
-    ascents: []
+  if (activeSession.value === null) {
+    activeSession.value = {
+      startTime: new Date(),
+      name: `Session ${new Date().toLocaleDateString('ru-RU')}`,
+      location: 'RockZona',
+      ascents: []
+    }
   }
   view.value = 'session'
 }
@@ -83,6 +87,19 @@ const endSession = async () => {
   toast.success("Session saved!")
 }
 
+const discardSession = () => {
+  toast.warning("Session discarded!")
+  activeSession.value = null
+  view.value = 'home'
+}
+
+const discardSafety = () => {
+  discardClicked.value = true
+  setTimeout(() => {
+    discardClicked.value = false
+  }, 2000)
+}
+
 </script>
 
 <template>
@@ -123,18 +140,27 @@ const endSession = async () => {
 
     <div v-if="view === 'session'" class="max-w-md mx-auto space-y-4">
       <div class="flex justify-between items-center bg-slate-900 p-4 rounded-2xl border border-slate-800">
+        <button @click="view = 'home'" class="text-xl p-2 rounded-full">←</button>
         <div>
           <h2 class="font-bold">{{ activeSession.name }}</h2>
           <p class="text-xs text-slate-500">{{ activeSession.ascents.length }} boulders logged</p>
         </div>
-        <button @click="endSession" class="text-red-400 font-bold px-3 py-1 bg-red-400/10 rounded-lg">Finish</button>
+        <div class="flex gap-2">
+          <button v-if="discardClicked" @click="discardSession"
+            class="text-red-400 font-bold px-3 py-1 bg-red-400/10 rounded-lg">Sure?</button>
+          <button v-else @click="discardSafety"
+            class="text-orange-400 font-bold px-3 py-1 bg-orange-400/10 rounded-lg">Discard</button>
+
+          <button @click="endSession"
+            class="text-green-400 font-bold px-3 py-1 bg-green-400/10 rounded-lg">Finish</button>
+        </div>
       </div>
       <AscentLogger @save="addAscent" />
     </div>
 
     <div v-if="view === 'fingerboard'" class="max-w-md mx-auto space-y-4">
       <div class="flex items-center gap-4 mb-4">
-        <button @click="view = 'home'" class="p-2 bg-slate-800 rounded-full">⬅️</button>
+        <button @click="view = 'home'" class="text-xl p-2 rounded-full">←</button>
         <h2 class="text-xl font-bold">Quick Log Hang</h2>
       </div>
       <FingerboardLogger @save="saveFingerboardOnly" />

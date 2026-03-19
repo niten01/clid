@@ -37,7 +37,7 @@ onMounted(() => {
       <div v-for="item in items" :key="item"
         class="w-20 py-4 shrink-0 flex flex-col items-center justify-center snap-center transition-all duration-300"
         :class="modelValue === item ? 'scale-125 text-white font-black' : 'text-gray-500 scale-90'">
-        <span class="text-2xl">{{ item }}</span>
+        <span class="text-2xl leading-none">{{ item }}</span>
         <span v-if="unit" class="text-[10px] uppercase font-bold opacity-60">{{ unit }}</span>
       </div>
     </div>

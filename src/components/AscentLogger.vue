@@ -67,7 +67,6 @@ const save = () => {
 
 <template>
   <div class="space-y-8 bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-2xl pb-10">
-
     <div>
       <label class="label-style">Font Grade</label>
       <WheelPicker :items="fontGrades" v-model="form.grade" />
