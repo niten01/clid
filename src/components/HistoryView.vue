@@ -233,7 +233,7 @@ const formatDate = (dateString) => {
 
             <div v-if="(session?.numWarmups || 0) > 0">
               <button @click="warmupExpanded = !warmupExpanded"
-                class="w-full bg-slate-800 p-3 flex items-center justify-between active:scale-[0.98] transition-transform border border-transparent active:border-slate-600 text-left"
+                class="w-full bg-slate-800 p-3 flex items-center justify-between transition-transform border border-transparent active:border-slate-600 text-left"
                 :class="warmupExpanded ? 'rounded-t-xl' : 'rounded-xl'">
                 <span class="text-blue-500 font-black text-xl">{{ session?.numWarmups || 0 }}</span>
                 <span class="text-[10px] uppercase text-slate-500 font-bold">warmup boulders</span>
