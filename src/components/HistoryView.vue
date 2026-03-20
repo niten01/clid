@@ -258,7 +258,8 @@ const formatDate = (dateString) => {
               </div>
             </div>
 
-            <button v-for="ascent in session.ascents.filter(a => !a.tags.includes('Warmup')).sort((a, b) => a.id > b.id)"
+            <button
+              v-for="ascent in session.ascents.filter(a => !a.tags.includes('Warmup')).sort((a, b) => a.id > b.id)"
               :key="ascent.id" @click="selectedAscent = ascent"
               class="w-full bg-slate-800 p-3 rounded-xl flex items-center justify-between active:scale-[0.98] transition-transform border border-transparent active:border-slate-600 text-left">
               <div>
@@ -266,7 +267,9 @@ const formatDate = (dateString) => {
                   <span :class="gradeColors[ascent.grade]"
                     class="px-2 py-0.5 text-white text-shadow rounded font-black text-sm">{{
                       ascent.grade }}</span>
-                  <span v-if="ascent.name" class="font-bold text-sm text-slate-200">{{ ascent.name }} •
+                  <span v-if="ascent.name" class="font-bold text-sm text-slate-200">{{ ascent.name }}
+                  </span>
+                  <span v-if="ascent.name" class="font-bold text-sm text-slate-200">•
                   </span>
                   <span class="font-bold text-sm text-slate-200">{{ ascent.result.toUpperCase() }}</span>
                   <span v-if="ascent.attempts > 1" class="text-xs text-slate-400">({{ ascent.attempts }} tries)</span>
