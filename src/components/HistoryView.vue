@@ -59,7 +59,6 @@ const fetchData = async () => {
 
       denormalizeField(ascent, 'tags')
       denormalizeField(ascent, 'incline')
-      denormalizeField(ascent, 'result')
     }
   }
 
@@ -272,7 +271,9 @@ const formatDate = (dateString) => {
                   <span v-if="ascent.name" class="font-bold text-sm text-slate-200">•
                   </span>
                   <span class="font-bold text-sm text-slate-200">{{ ascent.result.toUpperCase() }}</span>
-                  <span v-if="ascent.attempts > 1" class="text-xs text-slate-400">({{ ascent.attempts }} tries)</span>
+                  <span v-if="ascent.attempts > 1" class="text-xs text-slate-400">({{ ascent.attempts }} {{ ascent.result
+                    ===
+                    'repetition' ? 'reps' : 'tries'}})</span>
                 </div>
                 <div class="flex flex-wrap gap-1 mt-1">
                   <span v-for="tag in ascent.tags" :key="tag"

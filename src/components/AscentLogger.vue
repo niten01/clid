@@ -18,6 +18,8 @@ const tagsList = [
   {label: 'Pinch', path: 'icons/pinch.svg'},
   {label: 'Technical', path: 'icons/technical.svg'},
   {label: 'Athletic', path: 'icons/athletic.svg'},
+  {label: 'Polymer', path: 'icons/polymer.svg'},
+  {label: 'Moonboard', path: 'icons/moon-logo.svg'},
 ]
 
 const inclinesList = [
@@ -31,6 +33,7 @@ const inclinesList = [
 ]
 
 const defaultState = () => ({
+  name: null,
   grade: '6A',
   result: 'Top',
   attempts: 2,
@@ -57,6 +60,10 @@ const save = () => {
 
   if (form.result === 'flash') {
     form.attempts = 1
+  }
+
+  if (!form.name || form.name.length == 0) {
+    form.name = null
   }
 
   if (form.rating === 0) form.rating = null
@@ -159,6 +166,13 @@ const save = () => {
       <textarea v-model="form.note" placeholder="Beta notes, beta breaks, or how it felt..."
         class="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder:text-slate-600 resize-none"
         rows="3"></textarea>
+    </div>
+
+    <div>
+      <label class="label-style">Name</label>
+      <textarea v-model="form.name" placeholder="Unnamed"
+        class="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder:text-slate-600 resize-none"
+        rows="1"></textarea>
     </div>
 
     <button @click="save"

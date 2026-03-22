@@ -62,6 +62,7 @@ const endSession = async () => {
       // ascents: activeSession.value.ascents
     })
     .select()
+    .single()
 
   if (error) {
     toast.error(error.message)
@@ -69,6 +70,7 @@ const endSession = async () => {
     return
   }
 
+  console.log(session)
   for (const ascent of activeSession.value.ascents) {
     ascent.session_id = session.id
   }
