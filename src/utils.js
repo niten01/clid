@@ -39,5 +39,7 @@ export const boulderColorStyles = [
   {name: 'black', class: 'bg-black border-slate-800'},
   {name: 'purple', class: 'bg-purple-600 border-purple-400'},
   {name: 'gray', class: 'bg-gray-600 border-gray-500/50'},
+  {name: 'pink', class: 'bg-pink-400 border-pink-300'},
+  {name: 'orange', class: 'bg-orange-400 border-orange-300'},
   {name: 'colorful', class: 'bg-gradient-to-tr from-yellow-500 via-purple-700 to-blue-500 border-none'},
 ]

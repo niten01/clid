@@ -13,6 +13,7 @@ const results = ['Flash', 'Top', 'Repetition', 'Project']
 const tagsList = [
   {label: 'Warmup', path: 'icons/timer.svg'},
   {label: 'Sloper', path: 'icons/sloper.svg'},
+  {label: 'Slab', path: 'icons/slab-tag.svg'},
   {label: 'Crimp', path: 'icons/crimp.svg'},
   {label: 'Dynamic', path: 'icons/dyno.svg'},
   {label: 'Pinch', path: 'icons/pinch.svg'},
